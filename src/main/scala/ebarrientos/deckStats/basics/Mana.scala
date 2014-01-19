@@ -47,7 +47,7 @@ case class HybridMana(options: Set[Mana]) extends Mana {
 
   // It *is* of a color if at least one of the options is
   override def is(c: Color): Boolean =
-    options.foldLeft(false)((b, mana) => b || mana.is(c))
+    options.exists(mana => mana.is(c))
 
   // It's colorless if all options are colorless. Can't happen yet, but might with properties
   override def isColorless: Boolean = options.forall(_.isColorless)
@@ -60,19 +60,9 @@ case class HybridMana(options: Set[Mana]) extends Mana {
     options.foldLeft(Set[ManaProperty]())((rs, mana) => rs ++ mana.properties)
 
   override def hasProperty(p: ManaProperty): Boolean =
-    applyCrit(false, (m: Mana) => m.hasProperty(p))
+    options.exists(mana => mana.hasProperty(p))
 
 
   /** Converted mana cost. */
   override def cmc = options.map(_.cmc).max
-
-  /**
-   * Apply a criterion to all options.
-   * @param default Default value
-   * @return <code>!default</code> if criterion passes for some option. Otherwise, default
-   */
-  private[this] def applyCrit(default: Boolean, f: Mana => Boolean): Boolean = {
-    options foreach (m => if (f(m)) return !default)
-    default
-  }
 }

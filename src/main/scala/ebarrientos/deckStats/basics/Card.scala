@@ -6,7 +6,7 @@ package ebarrientos.deckStats.basics
  * Note: all cards in this representation have a power and toughness, even if they're not creatures.
  * If queried, noncreatures will return zero for both these values.
  */
-case class Card(	cost: IndexedSeq[Mana],
+case class Card(	cost: Seq[Mana],
     							name: String,
     							types: Set[CardType],
     							supertypes: Set[Supertype] = Set(),
@@ -16,4 +16,12 @@ case class Card(	cost: IndexedSeq[Mana],
     							toughness: Int = 0	)
 {
 	def cmc = cost.foldLeft(0)(_ + _.cmc)
+
+	def is(color: Color) = cost.exists(mana => mana.is(color))
+
+	def is(cardType: CardType) = types.contains(cardType)
+
+	def is(superType: Supertype) = supertypes.contains(superType)
+
+	def isSubType(subtype: String) = subtypes contains subtype
 }

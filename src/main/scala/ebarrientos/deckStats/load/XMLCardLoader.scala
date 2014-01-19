@@ -19,10 +19,14 @@ class XMLCardLoader(xmlFile: String) {
 		  val (supertypes, types, subtypes) = parseTypes((elem \ "type").text)
 		  val text = (elem \ "text").text
 
+		  val (power, toughness) = parsePT((elem \ "pt").text)
+
 		  Card(	ManaParser.parseAll(ManaParser.cost, cost).get.toIndexedSeq,
 		      	name,
 		      	types, supertypes, subtypes,
-		      	text )
+		      	text,
+		      	power,
+		      	toughness )
 		}
 	  else throw new Exception(name + " not found")
 	}
@@ -45,6 +49,27 @@ class XMLCardLoader(xmlFile: String) {
 	    else if (Supertype.isSupertype(x)) ressuper = ressuper :+ Supertype(x)
 	  })
 
-	  (ressuper.toSet, restypes.toSet, subtypes.trim.split(" ").toSet)
+	  // Be careful not to create a Set with an empty string instead of empty set
+	  val subtypeset = if (subtypes == "") Set.empty[String]
+	                   else subtypes.trim.split(" ").toSet
+
+	  (ressuper.toSet, restypes.toSet, subtypeset)
 	}
+
+
+	// Parse a power / toughness string into values
+	private[this] def parsePT(pt: String) = {
+	  if (pt == "") (0, 0)
+	  else {
+  	  val vals = pt.split("/")
+  	  (strToInt(vals.head), strToInt(vals.tail.head))
+	  }
+	}
+
+	// Convert power or toughness to Int, taking into consideration things like '*'
+  private[this] def strToInt(s: String) = {
+    if (s.contains("*") || s.contains("X")) 0
+    else if (s.contains("+")) s.takeWhile(_ != '+').toInt
+    else s.toInt
+  }
 }
