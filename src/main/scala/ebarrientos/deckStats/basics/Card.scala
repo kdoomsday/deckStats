@@ -1,7 +1,4 @@
-package ebarrientos.deckStats
-import ebarrientos.deckStats.basics.Mana
-import ebarrientos.deckStats.basics.CardType
-import ebarrientos.deckStats.basics.Supertype
+package ebarrientos.deckStats.basics
 
 
 /**
@@ -20,7 +17,3 @@ case class Card(	cost: IndexedSeq[Mana],
 {
 	def cmc = cost.foldLeft(0)(_ + _.cmc)
 }
-    							
-    							
-/** A deck of cards */
-case class Deck(cards: IndexedSeq[Card])

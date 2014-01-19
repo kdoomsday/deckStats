@@ -1,5 +1,6 @@
 package ebarrientos.deckStats.math
-import ebarrientos.deckStats.Deck
+
+import ebarrientos.deckStats.basics.Deck
 
 object Calc {
 

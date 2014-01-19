@@ -10,10 +10,10 @@ case object Snow extends ManaProperty
 trait Mana {
   def is(c: Color): Boolean
   def isColorless: Boolean
-  
+
   def properties: Set[ManaProperty]
   def hasProperty(p: ManaProperty): Boolean = properties(p)
-  
+
   def cmc: Int
 }
 
@@ -40,33 +40,32 @@ extends Mana
 
 
 /**
- * Hybrid Mana implementation. Contains a set of options that describe it. It's a list of list
- * because payment might be one mana of a color or multiple colorless.
+ * Hybrid Mana implementation. Contains a set of options that describe it.
  */
 case class HybridMana(options: Set[Mana]) extends Mana {
   def this(opts: List[Mana]) = this(opts.toSet)
-  
+
   // It *is* of a color if at least one of the options is
-  override def is(c: Color): Boolean = applyCrit(false, m => m.is(c))
-  
+  override def is(c: Color): Boolean =
+    options.foldLeft(false)((b, mana) => b || mana.is(c))
+
   // It's colorless if all options are colorless. Can't happen yet, but might with properties
-  override def isColorless: Boolean = applyCrit(true, (m => !m.isColorless))
-  
-  
-  private[this] def getProperties = {
-    var props = Set[ManaProperty]()
-    for (m <- options) props = props ++ m.properties
-    props
-  }
-  
-  override lazy val properties = getProperties
-  
+  override def isColorless: Boolean = options.forall(_.isColorless)
+
+
+  /** All properties this hybrid mana has. It's the union of all properties in all mana symbols
+    * that conform it.
+    */
+  override lazy val properties =
+    options.foldLeft(Set[ManaProperty]())((rs, mana) => rs ++ mana.properties)
+
   override def hasProperty(p: ManaProperty): Boolean =
     applyCrit(false, (m: Mana) => m.hasProperty(p))
-    
-    
-  override def cmc = options.foldLeft(0)((x, y) => if (x > y.cmc) x else y.cmc)
-    
+
+
+  /** Converted mana cost. */
+  override def cmc = options.map(_.cmc).max
+
   /**
    * Apply a criterion to all options.
    * @param default Default value
