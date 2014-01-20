@@ -11,6 +11,7 @@ import ebarrientos.deckStats.load.CardLoader
 import ebarrientos.deckStats.basics.ColorlessMana
 import ebarrientos.deckStats.basics.Card
 import ebarrientos.deckStats.load.XMLDeckLoader
+import ebarrientos.deckStats.basics.Creature
 
 @RunWith(classOf[JUnitRunner])
 class XMLDeckLoaderTest extends FlatSpec {
@@ -54,5 +55,6 @@ class XMLDeckLoaderTest extends FlatSpec {
     val deck = deckLoader.load
 
     assert(Calc.avgManaCost(deck) === 2)
+    assert(Calc.avgManaCost(deck, _.is(Creature)) === 2)
   }
 }

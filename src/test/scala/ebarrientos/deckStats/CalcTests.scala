@@ -20,10 +20,27 @@ class CalcTests extends FlatSpec {
   "Calc" should "calculate values of a deck correctly" in {
     val stripMine = Card(IndexedSeq(), "Strip Mine", Set(Land))
     val stp = Card(IndexedSeq(ColoredMana(White)), "Swords to Plowshares", Set(Instant))
-    val dc = Card(IndexedSeq(ColorlessMana(1), ColoredMana(Black)), "Dark Confidant", Set(Creature))
+    val dc =
+      Card(
+          IndexedSeq(ColorlessMana(1),
+          ColoredMana(Black)),
+          "Dark Confidant",
+          Set(Creature),
+          subtypes = Set("Human", "Wizard"))
 
     val deck = Deck(IndexedSeq(stripMine, stp, dc))
 
+    // Averages
     assert(Calc.avgManaCost(deck) == 1.0)
+    assert(Calc.avgManaCost(deck, _.is(Instant)) === 1.0)
+    assert(Calc.avgManaCost(deck, _.is(Black)) === 2.0)
+    assert(Calc.avgManaCost(deck, !_.is(White)) === 1.0)
+
+    // Counts
+    assert(Calc.count(deck) === 3)
+    assert(Calc.count(deck, _.is(Instant)) === 1)
+    assert(Calc.count(deck, _.is(Creature)) === 1)
+    assert(Calc.count(deck, _.isSubType("Human")) === 1)
+
   }
 }
