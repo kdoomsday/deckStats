@@ -4,8 +4,10 @@ import ebarrientos.deckStats.basics.Supertype
 import ebarrientos.deckStats.stringParsing.ManaParser
 import ebarrientos.deckStats.basics.Card
 
-class XMLCardLoader(xmlFile: String) {
+/** CardLoader that takes its info from an XML file. */
+class XMLCardLoader(xmlFile: String) extends CardLoader {
 	private[this] lazy val cards = scala.xml.XML.load(xmlFile)
+
 
 	def card(name: String): Card = {
 	  // The xml find gives nodeSeq. Names are unique, so head gives only match

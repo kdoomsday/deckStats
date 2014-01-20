@@ -1,10 +1,11 @@
+package load
+
 import ebarrientos.deckStats.load.XMLCardLoader
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
 import ebarrientos.deckStats.basics.Legendary
 import ebarrientos.deckStats.basics.Creature
-import org.scalatest.BeforeAndAfterAll
 import ebarrientos.deckStats.basics.White
 import ebarrientos.deckStats.basics.Black
 import ebarrientos.deckStats.basics.ColoredMana
@@ -13,11 +14,10 @@ import ebarrientos.deckStats.CardTestUtils
 import ebarrientos.deckStats.basics.Sorcery
 import ebarrientos.deckStats.basics.ColoredMana
 import ebarrientos.deckStats.basics.ColorlessMana
-import ebarrientos.deckStats.basics.Supertype
 
 @RunWith(classOf[JUnitRunner])
-class XMLLoaderTest extends FlatSpec with BeforeAndAfterAll {
-  lazy val loader = new XMLCardLoader(getClass().getResource("cards.xml").getFile())
+class XMLLoaderTest extends FlatSpec {
+  lazy val loader = new XMLCardLoader(getClass().getResource("/cards.xml").getFile())
 
   "Loader" should "load a creature correctly" in {
     val radiant = loader.card("Radiant, Archangel")
