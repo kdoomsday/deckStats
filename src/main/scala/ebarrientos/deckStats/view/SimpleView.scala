@@ -8,10 +8,15 @@ import java.awt.Dimension
   * area for showing the deck stats.
   */
 object SimpleView extends SimpleSwingApplication {
+  lazy val pathDeck = new TextField
+  lazy val pathCards = new TextField
+
+  lazy val prefSize = new Dimension(300, 400)
 
   def top = new MainFrame {
     title = "Simple deck stats view"
-    size = new Dimension(200, 300)
+    size = prefSize
+    preferredSize = prefSize
 
     val textArea = new TextArea
 
@@ -25,25 +30,26 @@ object SimpleView extends SimpleSwingApplication {
 
   // Full contents of the area that will be used for selecting card base and deck
   private[this] def selectorPanel(parent: Component) = {
+    def mPanel(l: Label, f: TextField, b: Button) = new BorderPanel {
+      import BorderPanel.Position._
+      layout(l) = West
+      layout(f) = Center
+      layout(b) = East
+    }
+
     val labelCards = new Label("Cards File:")
-    val pathCards = new TextField
     val buttonChooseCards = new Button("...")
     val chooserCards = new FileChooser
 
     val labelDeck  = new Label("Deck File:")
-    val pathDeck = new TextField
+    labelDeck.preferredSize = labelCards.preferredSize
     val buttonChooseDeck = new Button("...")
     val chooserDeck = new FileChooser
 
 
-    val panel = new GridPanel(2, 3) {
-      contents += labelCards
-      contents += pathCards
-      contents += buttonChooseCards
-
-      contents += labelDeck
-      contents += pathDeck
-      contents += buttonChooseDeck
+    val panel = new GridPanel(2, 1) {
+      contents += mPanel(labelCards, pathCards, buttonChooseCards)
+      contents += mPanel(labelDeck, pathDeck, buttonChooseDeck)
 
       listenTo(buttonChooseCards, buttonChooseDeck)
       reactions += {
