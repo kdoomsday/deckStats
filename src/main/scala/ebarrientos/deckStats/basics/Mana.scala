@@ -28,6 +28,18 @@ extends Mana
 }
 
 
+/** Represents X costs. */
+class XMana(properties: Set[ManaProperty] = Set())
+  extends ColorlessMana(0, properties)
+{
+  override def toString = "X"
+}
+object XMana {
+  def apply(properties: Set[ManaProperty] = Set()) = new XMana(properties)
+  def unapply(properties: Set[ManaProperty]) = Some(properties)
+}
+
+
 /** Each instance is one colored mana. */
 case class ColoredMana(color: Color, override val properties: Set[ManaProperty] = Set())
 extends Mana
