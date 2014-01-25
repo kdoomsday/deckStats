@@ -22,7 +22,6 @@ case class XMLDeckLoader(definition: Elem, loader: CardLoader) extends DeckLoade
 
     val cards = cardinfo flatMap { info => info match {
       case (name, number) =>
-        println(s"Loading $number of $name")  // DEBUG
         val card = loader.card(name)
         (1 to number.toInt).map(_ => card)
     }}

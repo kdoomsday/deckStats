@@ -38,22 +38,9 @@ object TextAreaStats extends ShowStats {
   }
 
 
-  /** Print the manacurve into a text area. */
+  /** Print the mana curve into a text area. */
   private[this] def printManaCurve(d: Deck) = {
-    def lt(a: Tuple2[Int, Int], b: Tuple2[Int, Int]) = a._1 < b._1
-
-    /** "Fill in" valueas that are not present. Only fills until the max. Seems an awful way to do
-      * this, so should improve later.
-      */
-    def fillmap(m: Map[Int, Int]): Map[Int, Int] = {
-      val max = m.keys.max
-      var res = m
-      (0 to max) foreach { i => if (!res.contains(i)) res = res updated (i, 0)}
-      res
-    }
-
-    val map = encode(d.cards.filter(!_.is(Land)) map (_.cmc))
-    val encodings = fillmap(map).toList.sortWith(lt)
+    val encodings = Calc.manaCurve(d)
 
     for ((cost, amount) <- encodings) {
       component.append("%2d: [%2d] ".format(cost, amount))

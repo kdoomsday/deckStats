@@ -55,6 +55,6 @@ class XMLDeckLoaderTest extends FlatSpec {
     val deck = deckLoader.load
 
     assert(Calc.avgManaCost(deck) === 2)
-    assert(Calc.avgManaCost(deck, _.is(Creature)) === 2)
+    assert(Calc.avgManaCost(deck, _.is(Creature)) === 3)
   }
 }
