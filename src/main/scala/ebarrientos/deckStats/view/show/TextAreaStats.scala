@@ -20,7 +20,7 @@ object TextAreaStats extends ShowStats {
       s"""Avg mana cost: ${Calc.avgManaCost(d)}
       |Avg nonland cost: ${Calc.avgManaCost(d, !_.is(Land))}
       |-----
-      |Lands: ${Calc.count(d, _.is(Land))}
+      |Lands: ${Calc.count(d, c => c.is(Land) && !c.is(Creature))}
       |Creatures: ${Calc.count(d, _.is(Creature))}
       |Other: ${Calc.count(d, c => !c.is(Creature) && !c.is(Land))}
       |-----

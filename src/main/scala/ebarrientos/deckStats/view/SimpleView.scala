@@ -10,6 +10,7 @@ import ebarrientos.deckStats.load.DeckLoader
 import ebarrientos.deckStats.load.XMLCardLoader
 import ebarrientos.deckStats.load.XMLDeckLoader
 import ebarrientos.deckStats.load.XMLDeckLoader
+import ebarrientos.deckStats.load.CachedLoader
 
 /** Main interface that shows a selector for the card database, a selector for the deck, and an
   * area for showing the deck stats.
@@ -37,6 +38,7 @@ object SimpleView extends SimpleSwingApplication {
     contents = new BorderPanel {
       layout(selectorPanel(this)) = BorderPanel.Position.North
       layout(panel) = BorderPanel.Position.Center
+      layout(status) = BorderPanel.Position.South
     }
 
     centerOnScreen()
@@ -97,7 +99,7 @@ object SimpleView extends SimpleSwingApplication {
   // When the card database is changed
   private[this] def changeCardLoader = {
     actionOrError {
-      cardLoader = Some(new XMLCardLoader(pathCards.text))
+      cardLoader = Some(new CachedLoader(new XMLCardLoader(pathCards.text)))
       changeDeck
     }
   }
