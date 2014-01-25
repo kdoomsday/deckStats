@@ -12,6 +12,8 @@ import ebarrientos.deckStats.basics.ColorlessMana
 import ebarrientos.deckStats.basics.Blue
 import ebarrientos.deckStats.basics.Mana
 import ebarrientos.deckStats.basics.ColorlessMana
+import ebarrientos.deckStats.basics.ColoredMana
+import ebarrientos.deckStats.CardTestUtils.manaSort
 
 @RunWith(classOf[JUnitRunner])
 class ManaParseTest extends FlatSpec {
@@ -24,9 +26,19 @@ class ManaParseTest extends FlatSpec {
         ColoredMana(White),
         ColoredMana(White),
         HybridMana(Set(ColorlessMana(2), ColoredMana(Blue))))
-        .sortWith(CardTestUtils.manaSort)
+        .sortWith(manaSort)
 
-    val res = ManaParser.parseAll(ManaParser.cost, costStr).get.sortWith(CardTestUtils.manaSort)
+    val res = ManaParser.parseAll(ManaParser.cost, costStr).get.sortWith(manaSort)
+
+    assert(expected === res)
+  }
+
+
+  it should "parse X costs correctly" in {
+    val costStr = "XW"
+
+    val expected = List(ColorlessMana(0), ColoredMana(White)).sortWith(manaSort)
+    val res = ManaParser.parseAll(ManaParser.cost, costStr).get.sortWith(manaSort)
 
     assert(expected === res)
   }
