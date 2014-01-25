@@ -11,12 +11,18 @@ import java.awt.Font
 /** Shows stats about a deck as a textual representation. */
 object TextAreaStats extends ShowStats {
   private[this] val linesep = System.getProperty("line.separator")
+  lazy val component = buildComponent
+
+  /** Construct the component used for showing */
+  private[this] def buildComponent = {
+    val area = new TextArea
+    area.font = new Font(Font.MONOSPACED, Font.TRUETYPE_FONT, 12)
+    area
+  }
+
 
   def show(d: Deck) = {
-    val res = new TextArea
-    res.font = new Font(Font.MONOSPACED, Font.TRUETYPE_FONT, 12)
-
-    res.append(
+    component.text =
       s"""Avg mana cost: ${Calc.avgManaCost(d)}
       |Avg nonland cost: ${Calc.avgManaCost(d, !_.is(Land))}
       |-----
@@ -25,15 +31,15 @@ object TextAreaStats extends ShowStats {
       |Other: ${Calc.count(d, c => !c.is(Creature) && !c.is(Land))}
       |-----
       |""".stripMargin
-    )
 
-    printManaCurve(d, res)
+    printManaCurve(d)
 
-    res
+    component.revalidate()
   }
 
+
   /** Print the manacurve into a text area. */
-  private[this] def printManaCurve(d: Deck, t: TextArea) = {
+  private[this] def printManaCurve(d: Deck) = {
     def lt(a: Tuple2[Int, Int], b: Tuple2[Int, Int]) = a._1 < b._1
 
     /** "Fill in" valueas that are not present. Only fills until the max. Seems an awful way to do
@@ -50,9 +56,9 @@ object TextAreaStats extends ShowStats {
     val encodings = fillmap(map).toList.sortWith(lt)
 
     for ((cost, amount) <- encodings) {
-      t.append("%2d: [%2d] ".format(cost, amount))
-      t.append("*" * amount)
-      t.append(linesep)
+      component.append("%2d: [%2d] ".format(cost, amount))
+      component.append("*" * amount)
+      component.append(linesep)
     }
   }
 }

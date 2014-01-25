@@ -6,6 +6,9 @@ import ebarrientos.deckStats.basics.Deck
 /** Given a deck, produce a representation of relevant information about it. */
 trait ShowStats {
 
-  /** Given a deck, return a Component that can be added to a view, to show info. */
-  def show(d: Deck): Component
+  /** Component this will use to show elements. */
+  def component: Component
+
+  /** Given a deck, show info in the managed component. */
+  def show(d: Deck): Unit
 }

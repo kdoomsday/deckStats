@@ -19,7 +19,6 @@ object SimpleView extends SimpleSwingApplication {
   lazy val pathDeck = new TextField
   lazy val pathCards = new TextField
   lazy val status = new Label("")
-  lazy val panel = new FlowPanel
 
   lazy val prefSize = new Dimension(300, 400)
 
@@ -37,7 +36,7 @@ object SimpleView extends SimpleSwingApplication {
 
     contents = new BorderPanel {
       layout(selectorPanel(this)) = BorderPanel.Position.North
-      layout(panel) = BorderPanel.Position.Center
+      layout(shower.component) = BorderPanel.Position.Center
       layout(status) = BorderPanel.Position.South
     }
 
@@ -118,10 +117,7 @@ object SimpleView extends SimpleSwingApplication {
   /** Perform the action of loading the deck and showing the stats. */
   private[this] def calculate = {
     // Handle loading of cards database and such prop
-    for (loader <- deckLoader) {
-      panel.contents.clear()
-      panel.contents += shower.show(loader.load)
-      panel.revalidate
-    }
+    for (loader <- deckLoader)
+        shower.show(loader.load)
   }
 }
