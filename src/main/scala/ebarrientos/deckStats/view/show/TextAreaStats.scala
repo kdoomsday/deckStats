@@ -9,7 +9,7 @@ import ebarrientos.deckStats.basics.Creature
 import java.awt.Font
 
 /** Shows stats about a deck as a textual representation. */
-object TextAreaStats extends ShowStats {
+class TextAreaStats extends ShowStats {
   private[this] val linesep = System.getProperty("line.separator")
   lazy val component = buildComponent
 
@@ -38,7 +38,7 @@ object TextAreaStats extends ShowStats {
   }
 
 
-  /** Print the mana curve into a text area. */
+  /** Print the mana curve into the text area. */
   private[this] def printManaCurve(d: Deck) = {
     val encodings = Calc.manaCurve(d)
 

@@ -4,13 +4,15 @@ import scala.swing._
 import scala.swing.event.ButtonClicked
 import java.awt.Dimension
 import ebarrientos.deckStats.view.show.ShowStats
-import ebarrientos.deckStats.view.show.TextAreaStats
 import ebarrientos.deckStats.load.CardLoader
 import ebarrientos.deckStats.load.DeckLoader
 import ebarrientos.deckStats.load.XMLCardLoader
 import ebarrientos.deckStats.load.XMLDeckLoader
 import ebarrientos.deckStats.load.XMLDeckLoader
 import ebarrientos.deckStats.load.CachedLoader
+import ebarrientos.deckStats.view.show.FormattedStats
+import scala.concurrent.impl.Future
+import java.awt.Cursor
 
 /** Main interface that shows a selector for the card database, a selector for the deck, and an
   * area for showing the deck stats.
@@ -20,13 +22,15 @@ object SimpleView extends SimpleSwingApplication {
   lazy val pathCards = new TextField
   lazy val status = new Label("")
 
-  lazy val prefSize = new Dimension(300, 400)
+  lazy val prefSize = new Dimension(800, 400)
+
+  private[this] var mainPanel: Panel = null
 
 
   private[this] var cardLoader: Option[CardLoader] = None
   private[this] var deckLoader: Option[DeckLoader] = None
   // What will actually show the information
-  lazy val shower: ShowStats = TextAreaStats
+  lazy val shower: ShowStats = new FormattedStats
 
 
   def top = new MainFrame {
@@ -34,11 +38,13 @@ object SimpleView extends SimpleSwingApplication {
     size = prefSize
     preferredSize = prefSize
 
-    contents = new BorderPanel {
+    mainPanel = new BorderPanel {
       layout(selectorPanel(this)) = BorderPanel.Position.North
       layout(shower.component) = BorderPanel.Position.Center
       layout(status) = BorderPanel.Position.South
     }
+
+    contents = mainPanel
 
     centerOnScreen()
   }
@@ -107,8 +113,10 @@ object SimpleView extends SimpleSwingApplication {
   private[this] def changeDeck = {
     cardLoader map { loader =>
       actionOrError {
-        deckLoader = Some(new XMLDeckLoader(pathDeck.text, loader))
-        calculate
+        if (pathDeck.text != "") {
+          deckLoader = Some(new XMLDeckLoader(pathDeck.text, loader))
+          calculate
+        }
       }
     }
   }
@@ -116,8 +124,37 @@ object SimpleView extends SimpleSwingApplication {
 
   /** Perform the action of loading the deck and showing the stats. */
   private[this] def calculate = {
-    // Handle loading of cards database and such prop
-    for (loader <- deckLoader)
+    import java.awt.Cursor._
+    import scala.concurrent.future
+    import scala.concurrent.ExecutionContext.Implicits._
+
+    val task = future {
+      // Handle loading of cards database and such prop
+      for (loader <- deckLoader) {
+        status.text = "Loading..."
+        setCursor(WAIT_CURSOR)
         shower.show(loader.load)
+      }
+    }
+
+    task onSuccess {
+      case _ => Swing.onEDT {
+        status.text = "Deck loaded!"
+        setCursor(getDefaultCursor())
+      }
+    }
+
+    task onFailure {
+      case e: Throwable => Swing.onEDT {
+        e.printStackTrace()
+        status.text = "Error loading: " + e.getMessage()
+        setCursor(getDefaultCursor())
+      }
+    }
   }
+
+
+  // Cursor manipulation functions
+  private[this] def setCursor(c: Cursor): Unit = mainPanel.cursor = c
+  private[this] def setCursor(cType: Int): Unit = setCursor(Cursor.getPredefinedCursor(cType))
 }
