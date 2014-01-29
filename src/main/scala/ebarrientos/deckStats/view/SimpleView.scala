@@ -20,7 +20,7 @@ import java.awt.Cursor
 object SimpleView extends SimpleSwingApplication {
   lazy val pathDeck = new TextField
   lazy val pathCards = new TextField
-  lazy val status = new Label("")
+  lazy val status = new Label("Ready!")
 
   lazy val prefSize = new Dimension(800, 400)
 
