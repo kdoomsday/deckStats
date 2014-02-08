@@ -13,14 +13,17 @@ import ebarrientos.deckStats.load.CachedLoader
 import ebarrientos.deckStats.view.show.FormattedStats
 import scala.concurrent.impl.Future
 import java.awt.Cursor
+import java.util.ResourceBundle
+import java.util.Locale
 
 /** Main interface that shows a selector for the card database, a selector for the deck, and an
   * area for showing the deck stats.
   */
 object SimpleView extends SimpleSwingApplication {
+  lazy val text = ResourceBundle.getBundle("locale/text")
   lazy val pathDeck = new TextField
   lazy val pathCards = new TextField
-  lazy val status = new Label("")
+  lazy val status = new Label(text.getString("statusbar.default"))
 
   lazy val prefSize = new Dimension(800, 400)
 
@@ -34,7 +37,7 @@ object SimpleView extends SimpleSwingApplication {
 
 
   def top = new MainFrame {
-    title = "Simple deck stats view"
+    title = text.getString("main.title")
     size = prefSize
     preferredSize = prefSize
 
@@ -58,13 +61,13 @@ object SimpleView extends SimpleSwingApplication {
       layout(b) = East
     }
 
-    val labelCards = new Label("Cards File:")
-    val buttonChooseCards = new Button("...")
+    val labelCards = new Label(text.getString("cardsdb.label"))
+    val buttonChooseCards = new Button(text.getString("cardsdb.buttonChoose"))
     val chooserCards = new FileChooser
 
-    val labelDeck  = new Label("Deck File:")
+    val labelDeck  = new Label(text.getString("deck.label"))
     labelDeck.preferredSize = labelCards.preferredSize
-    val buttonChooseDeck = new Button("...")
+    val buttonChooseDeck = new Button(text.getString("deck.buttonChoose"))
     val chooserDeck = new FileChooser
 
 
@@ -131,7 +134,7 @@ object SimpleView extends SimpleSwingApplication {
     val task = future {
       // Handle loading of cards database and such prop
       for (loader <- deckLoader) {
-        status.text = "Loading..."
+        status.text = text.getString("statusbar.loading")
         setCursor(WAIT_CURSOR)
         shower.show(loader.load)
       }
@@ -139,7 +142,7 @@ object SimpleView extends SimpleSwingApplication {
 
     task onSuccess {
       case _ => Swing.onEDT {
-        status.text = "Deck loaded!"
+        status.text = text.getString("statusbar.loaded")
         setCursor(getDefaultCursor())
       }
     }
@@ -147,7 +150,7 @@ object SimpleView extends SimpleSwingApplication {
     task onFailure {
       case e: Throwable => Swing.onEDT {
         e.printStackTrace()
-        status.text = "Error loading: " + e.getMessage()
+        status.text = text.getString("statusbar.error") + e.getMessage()
         setCursor(getDefaultCursor())
       }
     }
