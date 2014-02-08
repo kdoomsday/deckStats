@@ -14,7 +14,6 @@ import ebarrientos.deckStats.view.show.FormattedStats
 import scala.concurrent.impl.Future
 import java.awt.Cursor
 import java.util.ResourceBundle
-import java.util.Locale
 
 /** Main interface that shows a selector for the card database, a selector for the deck, and an
   * area for showing the deck stats.

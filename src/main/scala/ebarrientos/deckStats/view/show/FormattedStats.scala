@@ -52,26 +52,34 @@ class FormattedStats extends ShowStats {
   private[this] def buildComponent() = {
     // I will use grids for all of this. Later I may switch to a gridbag or something else
 
-    align(landCountLabel, creatureCountLabel, instSorcCountLabel, otherCountLabel)
+    //align(landCountLabel, creatureCountLabel, instSorcCountLabel, otherCountLabel)
 
-    val averages = hGrid(
-      new Label("Avg. cmc:"),
-      avgCostLabel,
-      new Label("Avg. cmc nonlands:"),
-      avgNonlandCostLabel
-    )
+    
+    val averages = new GridPanel(2, 2)
+    averages.contents += new Label("Avg. cmc:")
+    averages.contents += avgCostLabel
+    averages.contents += new Label("Avg. cmc nonlands:")
+    averages.contents += avgNonlandCostLabel
+    
+    val sep = new scala.swing.Separator(Orientation.Horizontal)
 
-    val counts = hGrid(
-      hGrid(label("Lands:"), landCountLabel),
-      hGrid(label("Creatures:"), creatureCountLabel),
-      hGrid(label("Instants/Sorceries:"), instSorcCountLabel),
-      hGrid(label("Other:"), otherCountLabel)
-    )
+    val counts = new GridPanel(4, 2)
+    counts.contents += new Label("Lands:")
+    counts.contents += landCountLabel
+    counts.contents += new Label("Creatures:")
+    counts.contents += creatureCountLabel
+    counts.contents += new Label("Instants/Sorceries:")
+    counts.contents += instSorcCountLabel
+    counts.contents += new Label("Other:")
+    counts.contents += otherCountLabel
 
+    val info = new BoxPanel(Orientation.Vertical)
+    info.contents += averages
+    info.contents += sep
+    info.contents += counts
 
-    val panel = new BoxPanel(Orientation.Vertical)
-    panel.contents += averages
-    panel.contents += counts
+    val panel = new GridPanel(1, 2)
+    panel.contents += info
     panel.contents += curveArea
     panel
   }
