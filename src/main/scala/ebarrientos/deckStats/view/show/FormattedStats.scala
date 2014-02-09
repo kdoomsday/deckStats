@@ -14,8 +14,11 @@ import ebarrientos.deckStats.basics.Sorcery
 import ebarrientos.deckStats.basics.Creature
 import java.awt.Font
 import scala.swing.Alignment
+import java.util.ResourceBundle
 
 class FormattedStats extends ShowStats {
+  private[this] lazy val text = ResourceBundle.getBundle("text")
+
   lazy val component = buildComponent()
 
   private[this] lazy val avgCostLabel = new Label("")
@@ -54,23 +57,23 @@ class FormattedStats extends ShowStats {
 
     //align(landCountLabel, creatureCountLabel, instSorcCountLabel, otherCountLabel)
 
-    
+
     val averages = new GridPanel(2, 2)
-    averages.contents += new Label("Avg. cmc:")
+    averages.contents += new Label(text.getString("avgCost.all.label"))
     averages.contents += avgCostLabel
-    averages.contents += new Label("Avg. cmc nonlands:")
+    averages.contents += new Label(text.getString("avgCost.nonLands.label"))
     averages.contents += avgNonlandCostLabel
-    
+
     val sep = new scala.swing.Separator(Orientation.Horizontal)
 
     val counts = new GridPanel(4, 2)
-    counts.contents += new Label("Lands:")
+    counts.contents += new Label(text.getString("count.lands.label"))
     counts.contents += landCountLabel
-    counts.contents += new Label("Creatures:")
+    counts.contents += new Label(text.getString("count.creatures.label"))
     counts.contents += creatureCountLabel
-    counts.contents += new Label("Instants/Sorceries:")
+    counts.contents += new Label(text.getString("count.instSoc.label"))
     counts.contents += instSorcCountLabel
-    counts.contents += new Label("Other:")
+    counts.contents += new Label(text.getString("count.other.label"))
     counts.contents += otherCountLabel
 
     val info = new BoxPanel(Orientation.Vertical)
