@@ -61,4 +61,11 @@ class CalcTests extends FlatSpec {
     // Only sorceries
     assert(Calc.manaCurve(deck, _.is(Sorcery)) === Seq())
   }
+
+
+
+  it should "count mana symbols" in {
+    val map = Map("W" -> 1, "B" -> 1, "C" -> 1)
+    assert(Calc.manaSymbols(deck) === map)
+  }
 }

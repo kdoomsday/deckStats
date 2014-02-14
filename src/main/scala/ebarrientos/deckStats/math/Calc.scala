@@ -4,6 +4,16 @@ import ebarrientos.deckStats.basics.Deck
 import ebarrientos.deckStats.basics.CardType
 import ebarrientos.deckStats.basics.Card
 import ebarrientos.deckStats.basics.Land
+import ebarrientos.deckStats.basics.Color
+import ebarrientos.deckStats.basics.ColorlessMana
+import ebarrientos.deckStats.basics.ColorlessMana
+import ebarrientos.deckStats.basics.ColorlessMana
+import ebarrientos.deckStats.basics.ColorlessMana
+import ebarrientos.deckStats.basics.Mana
+import ebarrientos.deckStats.basics.ColorlessMana
+import ebarrientos.deckStats.basics.ColoredMana
+import ebarrientos.deckStats.basics.ColoredMana
+import ebarrientos.deckStats.basics.HybridMana
 
 /** Provides operations to apply to decks of cards to get information. */
 object Calc {
@@ -51,5 +61,24 @@ object Calc {
 
     if (map.isEmpty) map.toSeq
     else fillmap(map).toSeq.sortWith(lt)
+  }
+
+
+  /** Count Mana Symbols in cards in a deck that match a criterion (By default all cards).
+    * A colored symbol counts once towards it's color. A colorless symbol counts for as much as it
+    * represents. A hybrid mana symbol counts once towards each thing it represents.
+    */
+  def manaSymbols(d: Deck, criterion: Card => Boolean = (_ => true)): Map[String, Int] = {
+    def mana2Map(m: Map[String, Int], mana: Mana): Map[String, Int] = mana match {
+      case ColorlessMana(cmc, _) => m.updated("C", m("C") + cmc)
+      case _: ColoredMana => m.updated(mana.toString, m(mana.toString) + 1)
+      case HybridMana(opts) => opts.foldLeft(m) { mana2Map(_, _)}
+    }
+
+    val mapCost = Map[String, Int]().withDefaultValue(0)
+
+    val symbols = d.cards.filter(criterion).flatMap(c => c.cost)
+
+    symbols.foldLeft(mapCost)(mana2Map)
   }
 }

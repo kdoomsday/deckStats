@@ -25,6 +25,7 @@ extends Mana
 {
   override def is(c: Color) = false
   override val isColorless = true
+  override def toString = cmc.toString
 }
 
 
@@ -47,6 +48,13 @@ extends Mana
   override def is(c: Color): Boolean = color == c
   override val isColorless: Boolean = false
   override val cmc = 1
+  override def toString = color match {
+    case White => "W"
+    case Blue => "U"
+    case Black => "B"
+    case Red => "R"
+    case Green => "G"
+  }
 }
 
 
@@ -77,4 +85,6 @@ case class HybridMana(options: Set[Mana]) extends Mana {
 
   /** Converted mana cost. */
   override def cmc = options.map(_.cmc).max
+
+  override def toString = "(" + options.mkString("/") + ")"
 }
