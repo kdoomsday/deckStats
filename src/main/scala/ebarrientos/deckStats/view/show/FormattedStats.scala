@@ -17,7 +17,7 @@ import scala.swing.Alignment
 import java.util.ResourceBundle
 
 class FormattedStats extends ShowStats {
-  private[this] lazy val text = ResourceBundle.getBundle("text")
+  private[this] lazy val text = ResourceBundle.getBundle("locale/formattedStats/text")
 
   lazy val component = buildComponent()
 
@@ -46,6 +46,8 @@ class FormattedStats extends ShowStats {
       Calc.count(d, c => !c.is(Land) && !c.is(Creature) && !c.is(Instant) && !c.is(Sorcery)).toString
 
     printManaCurve(d)
+    curveArea.append("%n%s%n".format("-" * 20))
+    printSymbols(d)
 
     component.revalidate()
   }
@@ -95,9 +97,16 @@ class FormattedStats extends ShowStats {
     val encodings = Calc.manaCurve(d)
 
     for ((cost, amount) <- encodings) {
-      curveArea.append("%2d: [%2d] ".format(cost, amount))
-      curveArea.append("*" * amount)
-      curveArea.append(System.getProperty("line.separator"))
+      curveArea.append("%2d: [%2d] %s%n".format(cost, amount, "*" * amount))
+    }
+  }
+
+
+  private[this] def printSymbols(d: Deck) = {
+    val mapSymbols = Calc.manaSymbols(d)
+    val list = mapSymbols.filter{ case (_, v) => v > 0 }.toList
+    list.sortWith{ case ((_, v1), (_, v2)) => v1 < v2 }.foreach{ case (k, v) =>
+        curveArea.append("(%2d): %s%n".format(v, k*v))
     }
   }
 
