@@ -1,8 +1,17 @@
 package ebarrientos.deckStats.load
 
-class MtgAPICardLoader extends CardLoader {
+import ebarrientos.deckStats.basics.Card
 
-  def card(name: String) = ???
+
+class MtgAPICardLoader extends CardLoader with LoadUtils {
+
+  def card(name: String) = {
+    val map = cardMap(name)
+
+    if (map.isDefined) cardFromMap(name, map.get)
+    else ???  // Handle error later
+  }
+
 
 
   /** Load a map with the json bits of the card from the web api.
@@ -22,5 +31,24 @@ class MtgAPICardLoader extends CardLoader {
       if (castMap.contains("error")) None
       else Some(castMap)
     })
+  }
+
+
+  private[this] def cardFromMap(name: String, map: Map[String, String]): Card = {
+    import ebarrientos.deckStats.stringParsing.JsonManaParser.{parseAll, cost}
+
+    val (supertypes, types, subtypes) = parseTypes(map("types"))
+    val (power, toughness) = parsePT( map.withDefaultValue("")("power_toughness") )
+
+    Card (
+        parseAll(cost, map("mana_cost")).get,
+        name,
+        types,
+        supertypes,
+        subtypes,
+        map("card_text"),
+        power,
+        toughness
+    )
   }
 }

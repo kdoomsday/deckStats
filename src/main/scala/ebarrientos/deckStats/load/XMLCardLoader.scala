@@ -5,7 +5,7 @@ import ebarrientos.deckStats.stringParsing.ManaParser
 import ebarrientos.deckStats.basics.Card
 
 /** CardLoader that takes its info from an XML file. */
-class XMLCardLoader(xmlFile: String) extends CardLoader {
+class XMLCardLoader(xmlFile: String) extends CardLoader with LoadUtils {
 	private[this] lazy val cards = scala.xml.XML.load(xmlFile)
 
 
@@ -23,7 +23,7 @@ class XMLCardLoader(xmlFile: String) extends CardLoader {
 
 		  val (power, toughness) = parsePT((elem \ "pt").text)
 
-		  Card(	ManaParser.parseAll(ManaParser.cost, cost).get.toIndexedSeq,
+		  Card(	ManaParser.parseAll(ManaParser.cost, cost).get,
 		      	name,
 		      	types, supertypes, subtypes,
 		      	text,
@@ -32,46 +32,4 @@ class XMLCardLoader(xmlFile: String) extends CardLoader {
 		}
 	  else throw new Exception(name + " not found")
 	}
-
-	/**
-	 * Get a list of supertypes, types and subtypes
-	 */
-	private[this] def parseTypes(typeLine: String):
-		(Set[Supertype], Set[CardType], Set[String]) =
-	{
-	  val ind = typeLine.indexOf("-")
-	  val (types, subtypes) = if (ind > -1) (typeLine take ind, typeLine drop (ind+1))
-	  												else (typeLine, "")
-
-	  var restypes = IndexedSeq[CardType]()
-	  var ressuper = IndexedSeq[Supertype]()
-
-	  types.split(" ").foreach(x => {
-	    if (CardType.isType(x)) restypes = restypes :+ CardType(x)
-	    else if (Supertype.isSupertype(x)) ressuper = ressuper :+ Supertype(x)
-	  })
-
-	  // Be careful not to create a Set with an empty string instead of empty set
-	  val subtypeset = if (subtypes == "") Set.empty[String]
-	                   else subtypes.trim.split(" ").toSet
-
-	  (ressuper.toSet, restypes.toSet, subtypeset)
-	}
-
-
-	// Parse a power / toughness string into values
-	private[this] def parsePT(pt: String) = {
-	  if (pt == "") (0, 0)
-	  else {
-  	  val vals = pt.split("/")
-  	  (strToInt(vals.head), strToInt(vals.tail.head))
-	  }
-	}
-
-	// Convert power or toughness to Int, taking into consideration things like '*'
-  private[this] def strToInt(s: String) = {
-    if (s.contains("*") || s.contains("X")) 0
-    else if (s.contains("+")) s.takeWhile(_ != '+').toInt
-    else s.toInt
-  }
 }

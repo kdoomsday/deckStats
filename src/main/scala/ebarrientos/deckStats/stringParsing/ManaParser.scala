@@ -15,7 +15,7 @@ import ebarrientos.deckStats.basics.HybridMana
 import ebarrientos.deckStats.basics.XMana
 
 object ManaParser extends JavaTokenParsers with ParserHelpers {
-	def cost: Parser[List[Mana]] = rep(mana)
+	def cost: Parser[Seq[Mana]] = rep(mana)
 	def mana: Parser[Mana] = color | colorless | xMana | hybrid
 	def color: Parser[Mana] = ("W" | "U" | "B" | "R" | "G") ^^ (x => str2Mana(x))
 	def colorless: Parser[Mana] = wholeNumber ^^ (x => ColorlessMana(x.toInt))
