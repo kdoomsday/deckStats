@@ -1,20 +1,26 @@
 package ebarrientos.deckStats.load
 
 import ebarrientos.deckStats.basics.Card
+import scala.util.control.Exception
 
 
 class MtgAPICardLoader extends CardLoader with LoadUtils {
 
   def card(name: String) = {
+    println(s"Loading: $name")
     val map = cardMap(name)
 
     if (map.isDefined) cardFromMap(name, map.get)
-    else ???  // Handle error later
+    else {
+      throw new Exception("Couldn't load card: " + name)
+      // TODO Localize exceptions
+    }
   }
 
 
 
-  /** Load a map with the json bits of the card from the web api.
+  /** Load a map with the json bits of the card from the web api. The map has the empty string set
+    * as the default value.
     * If there was an error loading, or the card doesn't exist, returns None. Otherwise, returns a
     * Some with the map that contains all relevant values.
     */
@@ -27,7 +33,7 @@ class MtgAPICardLoader extends CardLoader with LoadUtils {
     val parsed = JSON.parseFull(cardStr)
 
     parsed flatMap (m => {
-      val castMap = m.asInstanceOf[Map[String, String]]
+      val castMap = m.asInstanceOf[Map[String, String]].withDefaultValue("")
       if (castMap.contains("error")) None
       else Some(castMap)
     })
@@ -38,7 +44,7 @@ class MtgAPICardLoader extends CardLoader with LoadUtils {
     import ebarrientos.deckStats.stringParsing.JsonManaParser.{parseAll, cost}
 
     val (supertypes, types, subtypes) = parseTypes(map("types"))
-    val (power, toughness) = parsePT( map.withDefaultValue("")("power_toughness") )
+    val (power, toughness) = parsePT( map("power_toughness") )
 
     Card (
         parseAll(cost, map("mana_cost")).get,

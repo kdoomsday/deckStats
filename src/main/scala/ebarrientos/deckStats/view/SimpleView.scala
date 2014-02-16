@@ -14,6 +14,7 @@ import ebarrientos.deckStats.view.show.FormattedStats
 import scala.concurrent.impl.Future
 import java.awt.Cursor
 import java.util.ResourceBundle
+import ebarrientos.deckStats.load.MtgAPICardLoader
 
 /** Main interface that shows a selector for the card database, a selector for the deck, and an
   * area for showing the deck stats.
@@ -29,7 +30,7 @@ object SimpleView extends SimpleSwingApplication {
   private[this] var mainPanel: Panel = null
 
 
-  private[this] var cardLoader: Option[CardLoader] = None
+  lazy val cardLoader: CardLoader = new MtgAPICardLoader
   private[this] var deckLoader: Option[DeckLoader] = None
   // What will actually show the information
   lazy val shower: ShowStats = new FormattedStats
@@ -60,28 +61,17 @@ object SimpleView extends SimpleSwingApplication {
       layout(b) = East
     }
 
-    val labelCards = new Label(text.getString("cardsdb.label"))
-    val buttonChooseCards = new Button(text.getString("cardsdb.buttonChoose"))
-    val chooserCards = new FileChooser
-
     val labelDeck  = new Label(text.getString("deck.label"))
-    labelDeck.preferredSize = labelCards.preferredSize
+    //labelDeck.preferredSize = labelCards.preferredSize
     val buttonChooseDeck = new Button(text.getString("deck.buttonChoose"))
     val chooserDeck = new FileChooser
 
 
     val panel = new GridPanel(2, 1) {
-      contents += mPanel(labelCards, pathCards, buttonChooseCards)
       contents += mPanel(labelDeck, pathDeck, buttonChooseDeck)
 
-      listenTo(buttonChooseCards, buttonChooseDeck)
+      listenTo(buttonChooseDeck)
       reactions += {
-        case ButtonClicked(`buttonChooseCards`) =>
-          if (chooserCards.showOpenDialog(parent) == FileChooser.Result.Approve) {
-            pathCards.text = chooserCards.selectedFile.getAbsolutePath()
-            changeCardLoader
-          }
-
         case ButtonClicked(`buttonChooseDeck`) =>
           if (chooserDeck.showOpenDialog(parent) == FileChooser.Result.Approve) {
             pathDeck.text = chooserDeck.selectedFile.getAbsolutePath()
@@ -103,22 +93,12 @@ object SimpleView extends SimpleSwingApplication {
   }
 
 
-  // When the card database is changed
-  private[this] def changeCardLoader = {
-    actionOrError {
-      cardLoader = Some(new CachedLoader(new XMLCardLoader(pathCards.text)))
-      changeDeck
-    }
-  }
-
   // When the deck is changed
   private[this] def changeDeck = {
-    cardLoader map { loader =>
-      actionOrError {
-        if (pathDeck.text != "") {
-          deckLoader = Some(new XMLDeckLoader(pathDeck.text, loader))
-          calculate
-        }
+    actionOrError {
+      if (pathDeck.text != "") {
+        deckLoader = Some(new XMLDeckLoader(pathDeck.text, cardLoader))
+        calculate
       }
     }
   }

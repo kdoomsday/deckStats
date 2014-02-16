@@ -37,7 +37,7 @@ trait LoadUtils {
     if (pt == "") (0, 0)
     else {
       val vals = pt.split("/")
-      (strToInt(vals.head), strToInt(vals.tail.head))
+      (strToInt(vals.head.trim), strToInt(vals.tail.head.trim))
     }
   }
 

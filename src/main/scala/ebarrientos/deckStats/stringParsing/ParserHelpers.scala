@@ -26,7 +26,7 @@ trait ParserHelpers {
   }
 
   /** Long String representing a color to Color */
-  def longStr2Mana(s: String): Color = s match {
+  def longStr2Color(s: String): Color = s match {
     case "White" => White
     case "Blue" => Blue
     case "Black" => Black

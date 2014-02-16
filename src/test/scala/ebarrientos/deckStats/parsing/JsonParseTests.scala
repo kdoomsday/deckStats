@@ -17,6 +17,9 @@ import ebarrientos.deckStats.basics.HybridMana
 import ebarrientos.deckStats.basics.ColorlessMana
 import ebarrientos.deckStats.basics.ColoredMana
 import ebarrientos.deckStats.basics.White
+import ebarrientos.deckStats.basics.HybridMana
+import ebarrientos.deckStats.basics.ColoredMana
+import ebarrientos.deckStats.basics.ColoredMana
 
 @RunWith(classOf[JUnitRunner])
 class JsonParseTests extends FlatSpec {
@@ -42,6 +45,10 @@ class JsonParseTests extends FlatSpec {
             HybridMana( Set(ColorlessMana(2), ColoredMana(White)) )
         )
     )
+  }
+
+  it should "also parse hybrid mana" in {
+    check ("{Black or Green}", List(HybridMana(Set(ColoredMana(Black), ColoredMana(Green)))))
   }
 
 
