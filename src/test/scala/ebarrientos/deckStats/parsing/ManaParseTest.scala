@@ -1,20 +1,19 @@
-package ebarrientos.deckStats
+package ebarrientos.deckStats.parsing
 
 import ebarrientos.deckStats.stringParsing.ManaParser
 import org.scalatest.FlatSpec
 import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
 import ebarrientos.deckStats.basics.ColoredMana
 import ebarrientos.deckStats.basics.White
 import ebarrientos.deckStats.basics.ColoredMana
 import ebarrientos.deckStats.basics.HybridMana
 import ebarrientos.deckStats.basics.ColorlessMana
 import ebarrientos.deckStats.basics.Blue
-import ebarrientos.deckStats.basics.Mana
 import ebarrientos.deckStats.basics.ColorlessMana
 import ebarrientos.deckStats.basics.ColoredMana
 import ebarrientos.deckStats.CardTestUtils.manaSort
 import ebarrientos.deckStats.basics.XMana
+import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class ManaParseTest extends FlatSpec {
