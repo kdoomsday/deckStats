@@ -3,8 +3,8 @@ package ebarrientos.deckStats.load
 import ebarrientos.deckStats.basics.Card
 import scala.util.control.Exception
 
-
-class MtgAPICardLoader extends CardLoader with LoadUtils {
+/** Cardloader that gets card info from http://stegriff.co.uk/ */
+class MagicAPICardLoader extends CardLoader with LoadUtils {
 
   def card(name: String) = {
     println(s"Loading: $name")
@@ -41,7 +41,7 @@ class MtgAPICardLoader extends CardLoader with LoadUtils {
 
 
   private[this] def cardFromMap(name: String, map: Map[String, String]): Card = {
-    import ebarrientos.deckStats.stringParsing.MtgApiManaParser.{parseAll, cost}
+    import ebarrientos.deckStats.stringParsing.MagicApiManaParser.{parseAll, cost}
 
     val (supertypes, types, subtypes) = parseTypes(map("types"))
     val (power, toughness) = parsePT( map("power_toughness") )

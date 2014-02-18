@@ -9,7 +9,7 @@ import ebarrientos.deckStats.basics.ColoredMana
 import ebarrientos.deckStats.basics.ColorlessMana
 
 /** Mana parser for json results from mtg-api. */
-object MtgApiManaParser extends JavaTokenParsers with ParserHelpers {
+object MagicApiManaParser extends JavaTokenParsers with ParserHelpers {
   def cost: Parser[Seq[Mana]] = rep(mana)
   def mana: Parser[Mana] = "{" ~> (hybrid | color | colorless | xMana ) <~ "}"
   def color: Parser[Mana] = ("W" | "U" | "B" | "R" | "G") ^^ (x => str2Mana(x))

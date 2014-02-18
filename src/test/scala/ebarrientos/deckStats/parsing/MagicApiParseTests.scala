@@ -3,26 +3,18 @@ package ebarrientos.deckStats.parsing
 import org.scalatest.FlatSpec
 import org.scalatest.junit.JUnitRunner
 import org.junit.runner.RunWith
-import ebarrientos.deckStats.stringParsing.MtgApiManaParser
+import ebarrientos.deckStats.stringParsing.MagicApiManaParser
 import ebarrientos.deckStats.basics.ColorlessMana
 import ebarrientos.deckStats.basics.ColoredMana
 import ebarrientos.deckStats.basics.Black
-import ebarrientos.deckStats.CardTestUtils
 import ebarrientos.deckStats.basics.XMana
-import ebarrientos.deckStats.basics.ColoredMana
 import ebarrientos.deckStats.basics.Green
 import ebarrientos.deckStats.basics.Mana
-import ebarrientos.deckStats.basics.ColorlessMana
-import ebarrientos.deckStats.basics.HybridMana
-import ebarrientos.deckStats.basics.ColorlessMana
-import ebarrientos.deckStats.basics.ColoredMana
 import ebarrientos.deckStats.basics.White
 import ebarrientos.deckStats.basics.HybridMana
-import ebarrientos.deckStats.basics.ColoredMana
-import ebarrientos.deckStats.basics.ColoredMana
 
 @RunWith(classOf[JUnitRunner])
-class JsonParseTests extends FlatSpec {
+class MagicApiParseTests extends FlatSpec {
 
   "MtgApiManaParser" should "parse regular costs" in {
     check("{1}{B}", List(ColorlessMana(1), ColoredMana(Black)))
@@ -53,8 +45,8 @@ class JsonParseTests extends FlatSpec {
 
 
   private[this] def check(in: String, exp: List[Mana]) = {
-    import CardTestUtils.manaSort
-    import MtgApiManaParser.{parseAll, cost}
+    import ebarrientos.deckStats.CardTestUtils.manaSort
+    import MagicApiManaParser.{parseAll, cost}
 
     val expected = exp.sortWith(manaSort)
     val res = parseAll(cost, in).get.sortWith(manaSort)
