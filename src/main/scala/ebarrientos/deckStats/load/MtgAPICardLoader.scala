@@ -41,7 +41,7 @@ class MtgAPICardLoader extends CardLoader with LoadUtils {
 
 
   private[this] def cardFromMap(name: String, map: Map[String, String]): Card = {
-    import ebarrientos.deckStats.stringParsing.JsonManaParser.{parseAll, cost}
+    import ebarrientos.deckStats.stringParsing.MtgApiManaParser.{parseAll, cost}
 
     val (supertypes, types, subtypes) = parseTypes(map("types"))
     val (power, toughness) = parsePT( map("power_toughness") )

@@ -3,7 +3,7 @@ package ebarrientos.deckStats.parsing
 import org.scalatest.FlatSpec
 import org.scalatest.junit.JUnitRunner
 import org.junit.runner.RunWith
-import ebarrientos.deckStats.stringParsing.JsonManaParser
+import ebarrientos.deckStats.stringParsing.MtgApiManaParser
 import ebarrientos.deckStats.basics.ColorlessMana
 import ebarrientos.deckStats.basics.ColoredMana
 import ebarrientos.deckStats.basics.Black
@@ -24,7 +24,7 @@ import ebarrientos.deckStats.basics.ColoredMana
 @RunWith(classOf[JUnitRunner])
 class JsonParseTests extends FlatSpec {
 
-  "JsonManaParser" should "parse regular costs" in {
+  "MtgApiManaParser" should "parse regular costs" in {
     check("{1}{B}", List(ColorlessMana(1), ColoredMana(Black)))
   }
 
@@ -54,7 +54,7 @@ class JsonParseTests extends FlatSpec {
 
   private[this] def check(in: String, exp: List[Mana]) = {
     import CardTestUtils.manaSort
-    import JsonManaParser.{parseAll, cost}
+    import MtgApiManaParser.{parseAll, cost}
 
     val expected = exp.sortWith(manaSort)
     val res = parseAll(cost, in).get.sortWith(manaSort)
