@@ -1,20 +1,34 @@
 package ebarrientos.deckStats.view
 
-import scala.swing._
-import scala.swing.event.ButtonClicked
-import java.awt.Dimension
-import ebarrientos.deckStats.view.show.ShowStats
-import ebarrientos.deckStats.load.CardLoader
-import ebarrientos.deckStats.load.DeckLoader
-import ebarrientos.deckStats.load.XMLCardLoader
-import ebarrientos.deckStats.load.XMLDeckLoader
-import ebarrientos.deckStats.load.XMLDeckLoader
-import ebarrientos.deckStats.load.CachedLoader
-import ebarrientos.deckStats.view.show.FormattedStats
-import scala.concurrent.impl.Future
 import java.awt.Cursor
+import java.awt.Cursor.WAIT_CURSOR
+import java.awt.Cursor.getDefaultCursor
+import java.awt.Dimension
 import java.util.ResourceBundle
-import ebarrientos.deckStats.load.MagicAPICardLoader
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.future
+import scala.swing.BorderPanel
+import scala.swing.BorderPanel.Position.Center
+import scala.swing.BorderPanel.Position.East
+import scala.swing.BorderPanel.Position.West
+import scala.swing.Button
+import scala.swing.Component
+import scala.swing.FileChooser
+import scala.swing.GridPanel
+import scala.swing.Label
+import scala.swing.MainFrame
+import scala.swing.Panel
+import scala.swing.SimpleSwingApplication
+import scala.swing.Swing
+import scala.swing.TextField
+import scala.swing.event.ButtonClicked
+import ebarrientos.deckStats.load.DeckLoader
+import ebarrientos.deckStats.load.MtgDBCardLoader
+import ebarrientos.deckStats.load.XMLDeckLoader
+import ebarrientos.deckStats.view.show.FormattedStats
+import ebarrientos.deckStats.load.CardLoader
+import ebarrientos.deckStats.view.show.ShowStats
+import ebarrientos.deckStats.load.CachedLoader
 
 /** Main interface that shows a selector for the card database, a selector for the deck, and an
   * area for showing the deck stats.
@@ -30,7 +44,7 @@ object SimpleView extends SimpleSwingApplication {
   private[this] var mainPanel: Panel = null
 
 
-  lazy val cardLoader: CardLoader = new MagicAPICardLoader
+  lazy val cardLoader: CardLoader = new CachedLoader(new MtgDBCardLoader)
   private[this] var deckLoader: Option[DeckLoader] = None
   // What will actually show the information
   lazy val shower: ShowStats = new FormattedStats

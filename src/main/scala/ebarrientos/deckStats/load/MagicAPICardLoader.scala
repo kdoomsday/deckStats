@@ -2,9 +2,11 @@ package ebarrientos.deckStats.load
 
 import ebarrientos.deckStats.basics.Card
 import scala.util.control.Exception
+import ebarrientos.deckStats.load.utils.LoadUtils
+import ebarrientos.deckStats.load.utils.URLUtils
 
 /** Cardloader that gets card info from http://stegriff.co.uk/ */
-class MagicAPICardLoader extends CardLoader with LoadUtils {
+class MagicAPICardLoader extends CardLoader with LoadUtils with URLUtils {
 
   def card(name: String) = {
     println(s"Loading: $name")
@@ -28,8 +30,9 @@ class MagicAPICardLoader extends CardLoader with LoadUtils {
     import scala.io.Source
     import util.parsing.json.JSON
 
-    val saneName = name replace (" ", "%20")
-    val cardStr = Source.fromURL(s"""http://stegriff.co.uk/host/magic/?name=$saneName""").mkString
+//    val saneName = name replace (" ", "%20")
+//    val cardStr = Source.fromURL(s"""http://stegriff.co.uk/host/magic/?name=$saneName""").mkString
+    val cardStr = readURL(s"http://stegriff.co.uk/host/magic/?name=$name")
     val parsed = JSON.parseFull(cardStr)
 
     parsed flatMap (m => {

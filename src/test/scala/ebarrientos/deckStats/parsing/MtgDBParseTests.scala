@@ -24,15 +24,15 @@ import ebarrientos.deckStats.basics.ColoredMana
 class MtgDBParseTests extends FlatSpec {
 
   "MtgDBParseTests" should "parse regular costs" in {
-    check("{1}{B}", List(ColorlessMana(1), ColoredMana(Black)))
+    check("1B", List(ColorlessMana(1), ColoredMana(Black)))
   }
 
   it should "parse X mana" in {
-    check("{X}{G}", List(XMana(), ColoredMana(Green)))
+    check("XG", List(XMana(), ColoredMana(Green)))
   }
 
   it should "parse colorless mana" in {
-    check("{16}", List(ColorlessMana(16)))
+    check("16", List(ColorlessMana(16)))
   }
 
   it should "parse hybrid mana" in {

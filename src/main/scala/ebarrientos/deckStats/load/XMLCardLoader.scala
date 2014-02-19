@@ -3,6 +3,7 @@ import ebarrientos.deckStats.basics.CardType
 import ebarrientos.deckStats.basics.Supertype
 import ebarrientos.deckStats.stringParsing.ManaParser
 import ebarrientos.deckStats.basics.Card
+import ebarrientos.deckStats.load.utils.LoadUtils
 
 /** CardLoader that takes its info from an XML file. */
 class XMLCardLoader(xmlFile: String) extends CardLoader with LoadUtils {
