@@ -42,4 +42,10 @@ class ManaParseTest extends FlatSpec {
 
     assert(expected === res)
   }
+
+  it should "parse empty mana as empty seq" in {
+    val expected = Seq()
+    val res = ManaParser.parseAll(ManaParser.cost, "").get
+    assert(expected === res)
+  }
 }

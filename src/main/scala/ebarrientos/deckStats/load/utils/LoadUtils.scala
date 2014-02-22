@@ -1,4 +1,4 @@
-package ebarrientos.deckStats.load
+package ebarrientos.deckStats.load.utils
 
 import ebarrientos.deckStats.basics.CardType
 import ebarrientos.deckStats.basics.Supertype
