@@ -29,6 +29,7 @@ import ebarrientos.deckStats.view.show.FormattedStats
 import ebarrientos.deckStats.load.CardLoader
 import ebarrientos.deckStats.view.show.ShowStats
 import ebarrientos.deckStats.load.CachedLoader
+import ebarrientos.deckStats.load.H2DbLoader
 
 /** Main interface that shows a selector for the card database, a selector for the deck, and an
   * area for showing the deck stats.
@@ -44,7 +45,8 @@ object SimpleView extends SimpleSwingApplication {
   private[this] var mainPanel: Panel = null
 
 
-  lazy val cardLoader: CardLoader = new CachedLoader(new MtgDBCardLoader)
+  lazy val netLoader = new MtgDBCardLoader
+  lazy val cardLoader: CardLoader = new H2DbLoader(netLoader)
   private[this] var deckLoader: Option[DeckLoader] = None
   // What will actually show the information
   lazy val shower: ShowStats = new FormattedStats
