@@ -1,2 +1,6 @@
 /target
 /.cache
+/cards.h2.db
+/cards.h2.db.h2.db
+/cards.h2.db.trace.db
+/cards.trace.db
