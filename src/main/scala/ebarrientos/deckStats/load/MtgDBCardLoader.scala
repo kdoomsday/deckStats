@@ -20,12 +20,15 @@ class MtgDBCardLoader extends CardLoader with LoadUtils with URLUtils {
   private[this] def cardMap(name: String): Option[Map[String, Any]] = {
     println(s"Loading: $name")
 
-    val unQuotesName = name.replace("'", "")
+    val unQuotesName = sanitizeName(name)
     val cardStr = readURL(s"http://api.mtgdb.info/cards/$unQuotesName")
     val parsed = scala.util.parsing.json.JSON.parseFull(cardStr)
 
     parsed map (lm => lm.asInstanceOf[List[Map[String,String]]].head)
   }
+
+  private[this] def sanitizeName(name: String) =
+    name.replace("'", "").replace(",", "")
 
 
   /** The card object from the map. */
@@ -35,8 +38,13 @@ class MtgDBCardLoader extends CardLoader with LoadUtils with URLUtils {
 
     val ts = map("type").asInstanceOf[String]
     val subts = map("subType").asInstanceOf[String]
+    val typeline =
+      if ((subts eq null) || subts == "null")
+        ts
+      else
+        s"$ts - $subts"
 
-    val (supertypes, types, subtypes) = parseTypes(s"$ts - $subts")
+    val (supertypes, types, subtypes) = parseTypes(typeline)
 
     Card (
         parseAll(cost, map("manaCost").asInstanceOf[String]).get,

@@ -43,7 +43,11 @@ object DBInfo {
         types: Set[CardType],
         subtypes: Set[String]) =
     {
-      supertypes.mkString + " " + types.mkString + " - " + subtypes.mkString
+      val t = (supertypes ++ types).mkString(" ")
+      val res = if ((subtypes eq null) || subtypes.isEmpty) t
+                else t + " - " + subtypes.mkString(" ")
+
+      res
     }
 
     def unappCard(c: Card) =
