@@ -19,6 +19,7 @@ import ebarrientos.deckStats.basics.White
 import ebarrientos.deckStats.basics.HybridMana
 import ebarrientos.deckStats.basics.ColoredMana
 import ebarrientos.deckStats.basics.ColoredMana
+import ebarrientos.deckStats.basics.ColoredMana
 
 @RunWith(classOf[JUnitRunner])
 class MtgDBParseTests extends FlatSpec {
@@ -48,6 +49,11 @@ class MtgDBParseTests extends FlatSpec {
 
   it should "also parse hybrid mana" in {
     check ("{B/G}", List(HybridMana(Set(ColoredMana(Black), ColoredMana(Green)))))
+  }
+
+
+  it should "parse phyrexian mana" in {
+    check("{WP}", List(ColoredMana(White)))
   }
 
 

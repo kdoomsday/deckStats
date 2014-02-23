@@ -8,7 +8,9 @@ import ebarrientos.deckStats.basics.HybridMana
 import ebarrientos.deckStats.basics.ColoredMana
 import ebarrientos.deckStats.basics.ColorlessMana
 
-/** Mana parser for json results from mtg-api. */
+/** Mana parser for json results from mtg-api.
+  * It doesn't support phyrexian mana yet.
+  */
 object MagicApiManaParser extends JavaTokenParsers with ParserHelpers {
   def cost: Parser[Seq[Mana]] = rep(mana)
   def mana: Parser[Mana] = "{" ~> (hybrid | color | colorless | xMana ) <~ "}"

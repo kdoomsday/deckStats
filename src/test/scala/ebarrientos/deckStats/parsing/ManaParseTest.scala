@@ -14,6 +14,7 @@ import ebarrientos.deckStats.basics.ColoredMana
 import ebarrientos.deckStats.CardTestUtils.manaSort
 import ebarrientos.deckStats.basics.XMana
 import org.scalatest.junit.JUnitRunner
+import ebarrientos.deckStats.basics.ColoredMana
 
 @RunWith(classOf[JUnitRunner])
 class ManaParseTest extends FlatSpec {
@@ -46,6 +47,12 @@ class ManaParseTest extends FlatSpec {
   it should "parse empty mana as empty seq" in {
     val expected = Seq()
     val res = ManaParser.parseAll(ManaParser.cost, "").get
+    assert(expected === res)
+  }
+
+  it should "parse phyrexian mana" in {
+    val expected = Seq(ColoredMana(White))
+    val res = ManaParser.parseAll(ManaParser.cost, "(W/P)").get
     assert(expected === res)
   }
 }
