@@ -30,6 +30,7 @@ import ebarrientos.deckStats.load.CardLoader
 import ebarrientos.deckStats.view.show.ShowStats
 import ebarrientos.deckStats.load.CachedLoader
 import ebarrientos.deckStats.load.H2DbLoader
+import scala.swing.FlowPanel
 
 /** Main interface that shows a selector for the card database, a selector for the deck, and an
   * area for showing the deck stats.
@@ -68,31 +69,40 @@ object SimpleView extends SimpleSwingApplication {
     centerOnScreen()
   }
 
-  // Full contents of the area that will be used for selecting card base and deck
+  // Full contents of the area that will be used for selecting deck file
   private[this] def selectorPanel(parent: Component) = {
-    def mPanel(l: Label, f: TextField, b: Button) = new BorderPanel {
+    def mPanel(west: Component, center: Component, east: Component) = new BorderPanel {
       import BorderPanel.Position._
-      layout(l) = West
-      layout(f) = Center
-      layout(b) = East
+      layout(west) = West
+      layout(center) = Center
+      layout(east) = East
     }
 
     val labelDeck  = new Label(text.getString("deck.label"))
     //labelDeck.preferredSize = labelCards.preferredSize
     val buttonChooseDeck = new Button(text.getString("deck.buttonChoose"))
+    val buttonReload = new Button(text.getString("deck.reload"))
+    val bPanel = new FlowPanel
+    bPanel.contents += buttonReload
+    bPanel.contents += buttonChooseDeck
+
     val chooserDeck = new FileChooser
 
 
     val panel = new GridPanel(2, 1) {
-      contents += mPanel(labelDeck, pathDeck, buttonChooseDeck)
+      contents += mPanel(labelDeck, pathDeck, bPanel)
 
       listenTo(buttonChooseDeck)
+      listenTo(buttonReload)
       reactions += {
         case ButtonClicked(`buttonChooseDeck`) =>
           if (chooserDeck.showOpenDialog(parent) == FileChooser.Result.Approve) {
             pathDeck.text = chooserDeck.selectedFile.getAbsolutePath()
             changeDeck
           }
+
+        case ButtonClicked(`buttonReload`) =>
+          changeDeck
       }
     }
 
