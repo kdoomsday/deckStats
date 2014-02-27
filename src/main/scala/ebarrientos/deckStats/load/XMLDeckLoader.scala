@@ -15,17 +15,17 @@ case class XMLDeckLoader(definition: Elem, loader: CardLoader) extends DeckLoade
     // This will throw a NoSuchElementException if there is no main deck
     val maindeck = (definition \\ "zone").filter(n => (n \ "@name").text == "main").head
 
+
     val cardinfo = for {
                      card <- maindeck \ "card"
                    } yield ((card \ "@name").text, (card \ "@number").text)
 
-
-    val cards = cardinfo flatMap { info => info match {
+    val cards = cardinfo.par flatMap { info => info match {
       case (name, number) =>
         val card = loader.card(name)
         (1 to number.toInt).map(_ => card)
     }}
 
-    Deck(cards)
+    Deck(cards.seq)
   }
 }
