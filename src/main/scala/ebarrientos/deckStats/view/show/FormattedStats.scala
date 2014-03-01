@@ -15,6 +15,11 @@ import ebarrientos.deckStats.basics.Creature
 import java.awt.Font
 import scala.swing.Alignment
 import java.util.ResourceBundle
+import scalax.chart._
+import scalax.chart.Charting._
+import org.jfree.data.category.DefaultCategoryDataset
+import org.jfree.chart.renderer.category.BarRenderer
+import java.awt.Color
 
 class FormattedStats extends ShowStats {
   private[this] lazy val text = ResourceBundle.getBundle("locale/formattedStats/text")
@@ -28,14 +33,14 @@ class FormattedStats extends ShowStats {
   private[this] lazy val instSorcCountLabel = new Label("")
   private[this] lazy val otherCountLabel = new Label("")
 
-  lazy val curveArea = new TextArea
-  curveArea.editable = false
-  curveArea.font = new Font(Font.MONOSPACED, Font.TRUETYPE_FONT, 12)
+  lazy val curveArea = new GridPanel(2, 1)
 
   private[this] val doubleFormat = "%.02f"
 
 
   def show(d: Deck) = {
+    val begin = System.currentTimeMillis()
+
     avgCostLabel.text = doubleFormat format Calc.avgManaCost(d)
     avgNonlandCostLabel.text = doubleFormat format Calc.avgManaCost(d, !_.is(Land))
 
@@ -45,9 +50,12 @@ class FormattedStats extends ShowStats {
     otherCountLabel.text =
       Calc.count(d, c => !c.is(Land) && !c.is(Creature) && !c.is(Instant) && !c.is(Sorcery)).toString
 
-    printManaCurve(d)
-    curveArea.append("%n%s%n".format("-" * 20))
-    printSymbols(d)
+    curveArea.contents.clear
+    curveArea.contents += curvePanel(d)
+    curveArea.contents += symbolPanel(d)
+//    printManaCurve(d)
+//    curveArea.append("%n%s%n".format("-" * 20))
+//    printSymbols(d)
 
     component.revalidate()
   }
@@ -90,24 +98,52 @@ class FormattedStats extends ShowStats {
   }
 
 
-  /** Print the mana curve into a text area. */
-  private[this] def printManaCurve(d: Deck) = {
-    curveArea.text = ""
-
-    val encodings = Calc.manaCurve(d)
-
-    for ((cost, amount) <- encodings) {
-      curveArea.append("%2d: [%2d] %s%n".format(cost, amount, "*" * amount))
-    }
+  private[this] def curvePanel(d: Deck) = {
+    val encodings = Calc.manaCurve(d) //.filterNot{ case (_, y) => y == 0}
+    val chart = XYBarChart(encodings.toXYSeriesCollection("Cards per cost"))
+    chart.title = "Mana Curve"
+    chart.toPanel
   }
 
 
-  private[this] def printSymbols(d: Deck) = {
-    val mapSymbols = Calc.manaSymbols(d)
-    val list = mapSymbols.filter{ case (_, v) => v > 0 }.toList
-    list.sortWith{ case ((_, v1), (_, v2)) => v1 < v2 }.foreach{ case (k, v) =>
-        curveArea.append("(%2d): %s%n".format(v, k*v))
+  private[this] def symbolPanel(d: Deck) = {
+    import scala.language.implicitConversions
+
+    /** To present mana color symbols in the right color. */
+    class ManaBarRenderer(map: Map[String, Int]) extends BarRenderer {
+      def mana2Color(s: String): Color = s match {
+        case "W" => Color.white
+        case "U" => Color.blue
+        case "B" => Color.black
+        case "R" => Color.red
+        case "G" => Color.green
+        case "C" => Color.gray
+        case  _  => Color.pink
+      }
+
+      val mappings = new Array[Color](map.keys.size)
+      map.keys.zipWithIndex foreach {
+        case (manaString, index) => mappings(index) = mana2Color(manaString)
+      }
+
+      override def getItemPaint(row: Int, column: Int) = {
+        mappings(row)
+      }
     }
+
+
+    val mapSymbols = Calc.manaSymbols(d)
+    val data = new DefaultCategoryDataset
+    val category = "Amount"
+    for (m <- mapSymbols) m match {
+      case (mana, amount) => data.addValue(amount, mana, category)
+    }
+
+    val chart = BarChart(data)
+    chart.title = "Mana Symbols"
+    val renderer = new ManaBarRenderer(mapSymbols)
+    chart.plot.setRenderer(renderer)
+    chart.toPanel
   }
 
 
