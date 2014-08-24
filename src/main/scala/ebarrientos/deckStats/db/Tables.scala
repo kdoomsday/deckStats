@@ -1,16 +1,13 @@
 package ebarrientos.deckStats.db
 
-import scala.slick.driver.H2Driver.simple._
-import scala.slick.lifted.TableQuery
-
-import ebarrientos.deckStats.basics.Card
-import ebarrientos.deckStats.basics.Card
-import ebarrientos.deckStats.basics.CardType
-import ebarrientos.deckStats.basics.Supertype
+import ebarrientos.deckStats.basics.{Card, CardType, Supertype}
 import ebarrientos.deckStats.load.utils.LoadUtils
 import ebarrientos.deckStats.stringParsing.ManaParser
 
-object DBInfo {
+import scala.slick.driver.H2Driver.simple._
+import scala.slick.lifted.TableQuery
+
+object Tables {
 
   /** Table that stores the cards. */
   class Cards(tag: Tag) extends Table[Card](tag, "Cards") {
@@ -21,7 +18,7 @@ object DBInfo {
     def power = column[Int]("power")
     def toughness = column[Int]("toughness")
 
-    def * = (name, cost, typeline, text,power, toughness) <> (mkCard, unappCard _)
+    def * = (name, cost, typeline, text,power, toughness) <> (mkCard, unappCard)
 
 
     private[this] val parser = ManaParser

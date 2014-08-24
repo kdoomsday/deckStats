@@ -1,9 +1,7 @@
 package ebarrientos.deckStats.load
-import ebarrientos.deckStats.basics.CardType
-import ebarrientos.deckStats.basics.Supertype
-import ebarrientos.deckStats.stringParsing.ManaParser
 import ebarrientos.deckStats.basics.Card
 import ebarrientos.deckStats.load.utils.LoadUtils
+import ebarrientos.deckStats.stringParsing.ManaParser
 
 /** CardLoader that takes its info from an XML file. */
 class XMLCardLoader(xmlFile: String) extends CardLoader with LoadUtils {
@@ -15,7 +13,7 @@ class XMLCardLoader(xmlFile: String) extends CardLoader with LoadUtils {
 	  // TODO Handle case where card doesn't exist
 	  val seq = (cards \\ "card").filter(x => (x \\ "name").text == name)
 
-	  if (!seq.isEmpty) {
+	  if (seq.nonEmpty) {
 		  val elem = seq.head
 		  val name = (elem \ "name").text
 		  val cost = (elem \ "manacost").text

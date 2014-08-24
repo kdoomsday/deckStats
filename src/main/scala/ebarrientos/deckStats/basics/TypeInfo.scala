@@ -10,11 +10,11 @@ object CardType {
 
   // Convert a string into a type
   def apply(s: String): CardType = {
-    types.foreach(x => if (s == x.toString()) return x)
+    types.foreach(x => if (s == x.toString) return x)
     throw new Exception("Unknown card type")
   }
 
-  def unapply(t: CardType) = Some(t.toString())
+  def unapply(t: CardType) = Some(t.toString)
 
   def isType(s: String) = types.foldLeft(false)((p, n) => p || s == n.toString)
 }
@@ -43,7 +43,7 @@ object Supertype {
 
   def unapply(st: Supertype) = Some(st.toString)
 
-  def isSupertype(s: String) = supertypes.foldLeft(false)((p, n) => p || s == n.toString())
+  def isSupertype(s: String) = supertypes.foldLeft(false)((p, n) => p || s == n.toString)
 }
 
 case object Legendary extends Supertype

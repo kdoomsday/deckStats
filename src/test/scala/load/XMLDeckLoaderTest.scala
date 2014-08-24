@@ -1,17 +1,11 @@
 package load
 
-import org.scalatest.FlatSpec
-import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
-import ebarrientos.deckStats.load.XMLCardLoader
-import ebarrientos.deckStats.load.XMLDeckLoader
-import scala.xml.Elem
+import ebarrientos.deckStats.basics.{Card, ColorlessMana, Creature}
+import ebarrientos.deckStats.load.{CardLoader, XMLCardLoader, XMLDeckLoader}
 import ebarrientos.deckStats.math.Calc
-import ebarrientos.deckStats.load.CardLoader
-import ebarrientos.deckStats.basics.ColorlessMana
-import ebarrientos.deckStats.basics.Card
-import ebarrientos.deckStats.load.XMLDeckLoader
-import ebarrientos.deckStats.basics.Creature
+import org.junit.runner.RunWith
+import org.scalatest.FlatSpec
+import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class XMLDeckLoaderTest extends FlatSpec {
@@ -33,13 +27,13 @@ class XMLDeckLoaderTest extends FlatSpec {
       </cockatrice_deck>
 
     val deckLoader = XMLDeckLoader(deckXML, loader)
-    val deck = deckLoader.load
+    val deck = deckLoader.load()
 
     assert(Calc.avgManaCost(deck) === 2)
   }
 
   it should "load the deck correctly" in {
-    val loader = new XMLCardLoader(getClass().getResource("/cards.xml").getFile())
+    val loader = new XMLCardLoader(getClass.getResource("/cards.xml").getFile)
 
     val deckXML =
       <cockatrice_deck version="1">
@@ -52,7 +46,7 @@ class XMLDeckLoaderTest extends FlatSpec {
       </cockatrice_deck>
 
     val deckLoader = XMLDeckLoader(deckXML, loader)
-    val deck = deckLoader.load
+    val deck = deckLoader.load()
 
     assert(Calc.avgManaCost(deck) === 2)
     assert(Calc.avgManaCost(deck, _.is(Creature)) === 3)

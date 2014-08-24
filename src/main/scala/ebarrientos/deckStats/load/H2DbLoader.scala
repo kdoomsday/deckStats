@@ -1,6 +1,6 @@
 package ebarrientos.deckStats.load
 
-import ebarrientos.deckStats.db.DBInfo._
+import ebarrientos.deckStats.db.Tables._
 import scala.slick.driver.H2Driver.simple._
 import ebarrientos.deckStats.basics.Card
 import scala.slick.jdbc.meta.MTable
@@ -25,11 +25,10 @@ class H2DbLoader(val helper: CardLoader) extends CardLoader {
 
     c match {
       case Some(card) => card
-      case None => {
+      case None =>
         val loaded = helper.card(name)
         cards += loaded
         loaded
-      }
     }
   }
 }

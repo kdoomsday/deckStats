@@ -5,8 +5,8 @@
   <version>0.0.1-SNAPSHOT</version>
   <inceptionYear>2013</inceptionYear>
   <properties>
-    <scala.version>2.10.3</scala.version>
-    <scala-maven-plugin.version>3.1.6</scala-maven-plugin.version>
+    <scala.version>2.11.1</scala.version>
+    <scala-maven-plugin.version>3.1.7-SNAPSHOT</scala-maven-plugin.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <scala.major.version>2.10</scala.major.version>
   </properties>
@@ -18,15 +18,25 @@
       <version>${scala.version}</version>
     </dependency>
     <dependency>
-			<groupId>org.scalatest</groupId>
-			<artifactId>scalatest_2.10</artifactId>
-			<version>2.0.M5b</version>
-			<scope>test</scope>
-		</dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-parser-combinators</artifactId>
+      <version>2.11.0-M4</version>
+    </dependency>
     <dependency>
-    	<groupId>junit</groupId>
-    	<artifactId>junit</artifactId>
-    	<version>4.11</version>
+      <groupId>org.scala-lang.modules</groupId>
+      <artifactId>scala-xml_2.11</artifactId>
+      <version>1.0.2</version>
+    </dependency>
+    <dependency>
+	  <groupId>org.scalatest</groupId>
+	  <artifactId>scalatest_2.11</artifactId>
+	  <version>2.2.1</version>
+	  <scope>test</scope>
+	</dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.11</version>
     </dependency>
     <dependency>
     	<groupId>org.scala-lang</groupId>
@@ -35,8 +45,8 @@
     </dependency>
     <dependency>
 		  <groupId>com.typesafe.slick</groupId>
-		  <artifactId>slick_2.10</artifactId>
-		  <version>2.0.0</version>
+		  <artifactId>slick_2.11</artifactId>
+		  <version>2.1.0</version>
 		</dependency>
 		<dependency>
 		  <groupId>com.h2database</groupId>
@@ -93,7 +103,7 @@
 			<plugin>
 			  <groupId>org.scalatest</groupId>
 			  <artifactId>scalatest-maven-plugin</artifactId>
-			  <version>1.0-RC2</version>
+			  <version>1.0</version>
 			  <configuration>
 			    <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
 			    <junitxml>.</junitxml>

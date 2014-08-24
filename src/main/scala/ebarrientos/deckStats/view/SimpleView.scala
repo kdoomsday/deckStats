@@ -1,37 +1,14 @@
 package ebarrientos.deckStats.view
 
-import java.awt.Cursor
-import java.awt.Cursor.WAIT_CURSOR
-import java.awt.Cursor.getDefaultCursor
-import java.awt.Dimension
+import java.awt.{Cursor, Dimension}
 import java.util.ResourceBundle
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.future
-import scala.swing.BorderPanel
-import scala.swing.BorderPanel.Position.Center
-import scala.swing.BorderPanel.Position.East
-import scala.swing.BorderPanel.Position.West
-import scala.swing.Button
-import scala.swing.Component
-import scala.swing.FileChooser
-import scala.swing.GridPanel
-import scala.swing.Label
-import scala.swing.MainFrame
-import scala.swing.Panel
-import scala.swing.SimpleSwingApplication
-import scala.swing.Swing
-import scala.swing.TextField
+
+import ebarrientos.deckStats.load.{CardLoader, DeckLoader, H2DbLoader, MtgDBCardLoader, WeakCachedLoader, XMLDeckLoader}
+import ebarrientos.deckStats.view.show.{FormattedStats, ShowStats}
+
+import scala.concurrent.Future
 import scala.swing.event.ButtonClicked
-import ebarrientos.deckStats.load.DeckLoader
-import ebarrientos.deckStats.load.MtgDBCardLoader
-import ebarrientos.deckStats.load.XMLDeckLoader
-import ebarrientos.deckStats.view.show.FormattedStats
-import ebarrientos.deckStats.load.CardLoader
-import ebarrientos.deckStats.view.show.ShowStats
-import ebarrientos.deckStats.load.CachedLoader
-import ebarrientos.deckStats.load.H2DbLoader
-import scala.swing.FlowPanel
-import ebarrientos.deckStats.load.WeakCachedLoader
+import scala.swing.{BorderPanel, Button, Component, FileChooser, FlowPanel, GridPanel, Label, MainFrame, Panel, SimpleSwingApplication, Swing, TextField}
 
 /** Main interface that shows a selector for the card database, a selector for the deck, and an
   * area for showing the deck stats.
@@ -74,7 +51,7 @@ object SimpleView extends SimpleSwingApplication {
   // Full contents of the area that will be used for selecting deck file
   private[this] def selectorPanel(parent: Component) = {
     def mPanel(west: Component, center: Component, east: Component) = new BorderPanel {
-      import BorderPanel.Position._
+      import scala.swing.BorderPanel.Position._
       layout(west) = West
       layout(center) = Center
       layout(east) = East
@@ -99,12 +76,12 @@ object SimpleView extends SimpleSwingApplication {
       reactions += {
         case ButtonClicked(`buttonChooseDeck`) =>
           if (chooserDeck.showOpenDialog(parent) == FileChooser.Result.Approve) {
-            pathDeck.text = chooserDeck.selectedFile.getAbsolutePath()
-            changeDeck
+            pathDeck.text = chooserDeck.selectedFile.getAbsolutePath
+            changeDeck()
           }
 
         case ButtonClicked(`buttonReload`) =>
-          changeDeck
+          changeDeck()
       }
     }
 
@@ -116,49 +93,49 @@ object SimpleView extends SimpleSwingApplication {
   private[this] def actionOrError(block: => Unit) = {
     try { block }
     catch {
-      case e: Throwable => status.text = s"Error: ${e.getMessage()}"
+      case e: Throwable => status.text = s"Error: ${e.getMessage}"
     }
   }
 
 
   // When the deck is changed
-  private[this] def changeDeck = {
+  private[this] def changeDeck() = {
     actionOrError {
       if (pathDeck.text != "") {
         deckLoader = Some(new XMLDeckLoader(pathDeck.text, cardLoader))
-        calculate
+        calculate()
       }
     }
   }
 
 
   /** Perform the action of loading the deck and showing the stats. */
-  private[this] def calculate = {
+  private[this] def calculate() = {
     import java.awt.Cursor._
-    import scala.concurrent.future
-    import scala.concurrent.ExecutionContext.Implicits._
 
-    val task = future {
+import scala.concurrent.ExecutionContext.Implicits._
+
+    val task = Future {
       // Handle loading of cards database and such prop
       for (loader <- deckLoader) {
         status.text = text.getString("statusbar.loading")
         setCursor(WAIT_CURSOR)
-        shower.show(loader.load)
+        shower.show(loader.load())
       }
     }
 
     task onSuccess {
       case _ => Swing.onEDT {
         status.text = text.getString("statusbar.loaded")
-        setCursor(getDefaultCursor())
+        setCursor(getDefaultCursor)
       }
     }
 
     task onFailure {
       case e: Throwable => Swing.onEDT {
         e.printStackTrace()
-        status.text = text.getString("statusbar.error") + e.getMessage()
-        setCursor(getDefaultCursor())
+        status.text = text.getString("statusbar.error") + e.getMessage
+        setCursor(getDefaultCursor)
       }
     }
   }

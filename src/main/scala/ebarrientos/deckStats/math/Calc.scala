@@ -1,19 +1,6 @@
 package ebarrientos.deckStats.math
 
-import ebarrientos.deckStats.basics.Deck
-import ebarrientos.deckStats.basics.CardType
-import ebarrientos.deckStats.basics.Card
-import ebarrientos.deckStats.basics.Land
-import ebarrientos.deckStats.basics.Color
-import ebarrientos.deckStats.basics.ColorlessMana
-import ebarrientos.deckStats.basics.ColorlessMana
-import ebarrientos.deckStats.basics.ColorlessMana
-import ebarrientos.deckStats.basics.ColorlessMana
-import ebarrientos.deckStats.basics.Mana
-import ebarrientos.deckStats.basics.ColorlessMana
-import ebarrientos.deckStats.basics.ColoredMana
-import ebarrientos.deckStats.basics.ColoredMana
-import ebarrientos.deckStats.basics.HybridMana
+import ebarrientos.deckStats.basics.{Card, ColoredMana, ColorlessMana, Deck, HybridMana, Land, Mana}
 
 /** Provides operations to apply to decks of cards to get information. */
 object Calc {
@@ -36,7 +23,7 @@ object Calc {
 
   /** Count the number of cards in a deck that match a certain predicate. */
   def count(deck: Deck, pred: Card => Boolean) =
-    deck.cards.filter(pred).size
+    deck.cards.count(pred)
 
 
   /** Show a mana curve for cards that match a criterion. By default gives manacurve of all nonland
@@ -45,7 +32,7 @@ object Calc {
     */
   def manaCurve(d: Deck, criterion: Card => Boolean = !_.is(Land)): Seq[(Int, Int)] = {
     // Compare tuples only by the first element.
-    def lt(a: Tuple2[Int, Int], b: Tuple2[Int, Int]) = a._1 < b._1
+    def lt(a: (Int, Int), b: (Int, Int)) = a._1 < b._1
 
     /** "Fill in" values that are not present. Only fills until the max. Seems an awful way to do
       * this, so should improve later.
@@ -68,11 +55,11 @@ object Calc {
     * A colored symbol counts once towards it's color. A colorless symbol counts for as much as it
     * represents. A hybrid mana symbol counts once towards each thing it represents.
     */
-  def manaSymbols(d: Deck, criterion: Card => Boolean = (_ => true)): Map[String, Int] = {
+  def manaSymbols(d: Deck, criterion: Card => Boolean = _ => true): Map[String, Int] = {
     def mana2Map(m: Map[String, Int], mana: Mana): Map[String, Int] = mana match {
       case ColorlessMana(cmc, _) => m.updated("C", m("C") + cmc)
       case _: ColoredMana => m.updated(mana.toString, m(mana.toString) + 1)
-      case HybridMana(opts) => opts.foldLeft(m) { mana2Map(_, _)}
+      case HybridMana(opts) => opts.foldLeft(m) { mana2Map }
     }
 
     val mapCost = Map[String, Int]().withDefaultValue(0)

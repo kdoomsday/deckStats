@@ -1,25 +1,29 @@
 package ebarrientos.deckStats.view.show
 
-import scala.swing.GridPanel
-import scala.swing.BoxPanel
-import scala.swing.Orientation
-import scala.swing.Label
-import scala.swing.TextArea
-import ebarrientos.deckStats.basics.Deck
-import scala.swing.Component
-import ebarrientos.deckStats.math.Calc
-import ebarrientos.deckStats.basics.Land
-import ebarrientos.deckStats.basics.Instant
-import ebarrientos.deckStats.basics.Sorcery
-import ebarrientos.deckStats.basics.Creature
-import java.awt.Font
-import scala.swing.Alignment
-import java.util.ResourceBundle
-import scalax.chart._
-import scalax.chart.Charting._
-import org.jfree.data.category.DefaultCategoryDataset
-import org.jfree.chart.renderer.category.BarRenderer
 import java.awt.Color
+import java.util.ResourceBundle
+
+import scala.language.implicitConversions
+import scala.swing.Alignment
+import scala.swing.BoxPanel
+import scala.swing.Component
+import scala.swing.GridPanel
+import scala.swing.Label
+import scala.swing.Orientation
+
+import org.jfree.chart.labels.StandardCategoryItemLabelGenerator
+import org.jfree.chart.renderer.category.BarRenderer
+import org.jfree.data.category.DefaultCategoryDataset
+
+import ebarrientos.deckStats.basics.Creature
+import ebarrientos.deckStats.basics.Deck
+import ebarrientos.deckStats.basics.Instant
+import ebarrientos.deckStats.basics.Land
+import ebarrientos.deckStats.basics.Sorcery
+import ebarrientos.deckStats.math.Calc
+import scalax.chart.Charting.BarChart
+import scalax.chart.Charting.RichTuple2s
+import scalax.chart.Charting.XYBarChart
 
 class FormattedStats extends ShowStats {
   private[this] lazy val text = ResourceBundle.getBundle("locale/formattedStats/text")
@@ -50,12 +54,13 @@ class FormattedStats extends ShowStats {
     otherCountLabel.text =
       Calc.count(d, c => !c.is(Land) && !c.is(Creature) && !c.is(Instant) && !c.is(Sorcery)).toString
 
-    curveArea.contents.clear
+    curveArea.contents.clear()
     curveArea.contents += curvePanel(d)
     curveArea.contents += symbolPanel(d)
 //    printManaCurve(d)
 //    curveArea.append("%n%s%n".format("-" * 20))
 //    printSymbols(d)
+    println(s"Calculation took ${System.currentTimeMillis() - begin} ms.")
 
     component.revalidate()
   }
@@ -142,7 +147,10 @@ class FormattedStats extends ShowStats {
     val chart = BarChart(data)
     chart.title = "Mana Symbols"
     val renderer = new ManaBarRenderer(mapSymbols)
+    renderer.setBaseItemLabelGenerator(new StandardCategoryItemLabelGenerator)
+    renderer.setBaseItemLabelsVisible(true)
     chart.plot.setRenderer(renderer)
+    chart.orientation = Orientation.Horizontal
     chart.toPanel
   }
 

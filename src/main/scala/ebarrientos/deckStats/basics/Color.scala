@@ -1,7 +1,7 @@
 package ebarrientos.deckStats.basics
 
 /** All colors defined by MTG */
-sealed class Color
+sealed trait Color
 
 object White extends Color
 object Blue extends Color

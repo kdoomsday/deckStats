@@ -1,19 +1,9 @@
 package ebarrientos.deckStats
 
+import ebarrientos.deckStats.basics.{Black, Blue, ColoredMana, ColorlessMana, Green, HybridMana, Red, White}
 import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
 import org.scalatest._
-import ebarrientos.deckStats.basics.Mana
-import ebarrientos.deckStats.basics.White
-import ebarrientos.deckStats.basics.ColoredMana
-import ebarrientos.deckStats.basics.HybridMana
-import ebarrientos.deckStats.basics.Black
-import ebarrientos.deckStats.basics.ColorlessMana
-import org.scalatest.matchers.ClassicMatchers
-import org.scalatest.matchers.ShouldMatchers
-import ebarrientos.deckStats.basics.Green
-import ebarrientos.deckStats.basics.Blue
-import ebarrientos.deckStats.basics.Red
+import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class ManaTests extends FlatSpec {
