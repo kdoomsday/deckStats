@@ -64,15 +64,17 @@ object SimpleView extends SimpleSwingApplication {
 
     /** Build the reload button. */
    def getReloadButton(relPath: String): Button = {
+      val buttonText = text.getString("deck.reload")
       val is = Thread.currentThread().getContextClassLoader.getResourceAsStream(relPath)
       if (is != null) {
         val button = new Button()
         button.icon = new ImageIcon(ImageIO.read(is))
+        button.tooltip = buttonText
         button
       }
       else {
         println(s"Couldn't find icon on path: $relPath")
-        new Button(text.getString("deck.reload"))
+        new Button(buttonText)
       }
     }
 
