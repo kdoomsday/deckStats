@@ -2,6 +2,9 @@ package ebarrientos.deckStats.view
 
 import java.awt.{Cursor, Dimension}
 import java.util.ResourceBundle
+import javax.imageio.ImageIO
+import javax.swing.plaf.nimbus.NimbusLookAndFeel
+import javax.swing.{ImageIcon, UIManager}
 
 import ebarrientos.deckStats.load.{CardLoader, DeckLoader, H2DbLoader, MtgDBCardLoader, WeakCachedLoader, XMLDeckLoader}
 import ebarrientos.deckStats.view.show.{FormattedStats, ShowStats}
@@ -32,10 +35,12 @@ object SimpleView extends SimpleSwingApplication {
   lazy val shower: ShowStats = new FormattedStats
 
 
+  /** Frame that houses the view */
   def top = new MainFrame {
+    UIManager.setLookAndFeel(new NimbusLookAndFeel)
+
     title = text.getString("main.title")
-    size = prefSize
-    preferredSize = prefSize
+    maximize()
 
     mainPanel = new BorderPanel {
       layout(selectorPanel(this)) = BorderPanel.Position.North
@@ -57,10 +62,27 @@ object SimpleView extends SimpleSwingApplication {
       layout(east) = East
     }
 
+    /** Build the reload button. */
+   def getReloadButton(relPath: String): Button = {
+      val is = Thread.currentThread().getContextClassLoader.getResourceAsStream(relPath)
+      if (is != null) {
+        val button = new Button()
+        button.icon = new ImageIcon(ImageIO.read(is))
+        button
+      }
+      else {
+        println(s"Couldn't find icon on path: $relPath")
+        new Button(text.getString("deck.reload"))
+      }
+    }
+
+
     val labelDeck  = new Label(text.getString("deck.label"))
     //labelDeck.preferredSize = labelCards.preferredSize
     val buttonChooseDeck = new Button(text.getString("deck.buttonChoose"))
-    val buttonReload = new Button(text.getString("deck.reload"))
+
+    val buttonReload = getReloadButton("img/reload.png")
+
     val bPanel = new FlowPanel
     bPanel.contents += buttonReload
     bPanel.contents += buttonChooseDeck
